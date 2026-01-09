@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'supabase_client.dart';
+
 import 'home_screen.dart';
 import 'task_screen.dart';
 import 'view_screen.dart';
+import 'profile_screen.dart'; // ✅ Profile screen import
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +20,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'TODO App',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
       home: const NavBar(),
     );
   }
@@ -34,10 +38,12 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const TaskScreen(),
-    const ViewScreen(),
+  // ✅ screens count == navbar items count
+  final List<Widget> _screens = const [
+    HomeScreen(),
+    TaskScreen(),
+    ViewScreen(),
+    ProfileScreen(),
   ];
 
   @override
@@ -45,13 +51,30 @@ class _NavBarState extends State<NavBar> {
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed, // ✅ important (4 items)
         currentIndex: _currentIndex,
-        onTap: (i) => setState(() => _currentIndex = i),
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.add_task), label: "Task"),
-          BottomNavigationBarItem(icon: Icon(Icons.view_list), label: "View"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_task),
+            label: "Task",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.view_list),
+            label: "View",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: "Profile",
+          ),
         ],
       ),
     );
