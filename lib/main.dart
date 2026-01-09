@@ -51,6 +51,7 @@ class _NavBarState extends State<NavBar> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.add_task), label: "Task"),
           BottomNavigationBarItem(icon: Icon(Icons.view_list), label: "View"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
       ),
     );
