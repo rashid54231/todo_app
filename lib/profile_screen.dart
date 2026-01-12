@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'supabase_client.dart';
+import 'student_screen.dart';
+import 'admin_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,55 +17,79 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    loadProfiles();
+    fetchProfiles();
   }
 
-  Future<void> loadProfiles() async {
+  Future<void> fetchProfiles() async {
     final data = await SupabaseClientService.client
         .from('profile')
-        .select()
-        .order('created_at');
+        .select();
 
-    students = data.where((e) => e['role'] == 'student').toList();
-    admins = data.where((e) => e['role'] == 'admin').toList();
-
-    setState(() {});
+    setState(() {
+      students = data.where((e) => e['role'] == 'student').toList();
+      admins = data.where((e) => e['role'] == 'admin').toList();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Profiles")),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
 
-          /// STUDENT SECTION
-          const Text(
-            "Students",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              /// STUDENT SECTION
+              const Text("Students",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+
+              ...students.map((s) => Card(
+                child: ListTile(
+                  title: Text(s['name']),
+                  trailing: ElevatedButton(
+                    child: const Text("View"),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => StudentScreen(student: s),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              )),
+
+              const SizedBox(height: 30),
+
+              /// ADMIN SECTION
+              const Text("Admins",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+
+              ...admins.map((a) => Card(
+                child: ListTile(
+                  title: Text(a['name']),
+                  trailing: ElevatedButton(
+                    child: const Text("View"),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => AdminScreen(admin: a),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              )),
+            ],
           ),
-          const Divider(),
-
-          ...students.map((s) => ListTile(
-            leading: const Icon(Icons.school),
-            title: Text(s['name']),
-          )),
-
-          const SizedBox(height: 30),
-
-          /// ADMIN SECTION
-          const Text(
-            "Admins",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const Divider(),
-
-          ...admins.map((a) => ListTile(
-            leading: const Icon(Icons.admin_panel_settings),
-            title: Text(a['name']),
-          )),
-        ],
+        ),
       ),
     );
   }
